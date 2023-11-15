@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://security-db-test.c7j4gjsdenq5.ap-southeast-1.rds.amazonaws.com/dcrop_hightech
+    url: jdbc:mysql://security-db-test.c7j4gjsdenq5.ap-southeast-1.rds.amazonaws.com/easy_bank
     username: admin
     password: Egan130599
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -9,3 +9,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+    hibernate:
+      ddl-auto: update
+server:
+  port: 9999
