@@ -1,13 +1,11 @@
 package com.dcrop.hightech.ecommercy.ecommercyserver.security;
 
 import com.dcrop.hightech.ecommercy.ecommercyserver.security.filters.JwtTokenGeneratorFilter;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -15,10 +13,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -40,7 +35,7 @@ public class SecurityConfig {
                  * @securityContext().requireExplicitSave(false):
                  * Cái này là để giao việc tạo ra JSESSIONID sẽ do spring quản lý và lưu
                  * trong spring context holder
-                 * @sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+                 * @sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                  * Cái này sẽ luôn tạo ra JSESSIONID khi t thực hiện login lần đầu.
                  */
                 .cors().configurationSource(request -> {
