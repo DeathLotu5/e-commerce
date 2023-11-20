@@ -4,8 +4,6 @@ import com.dcrop.hightech.ecommercy.ecommercyserver.controllers.requests.AuthReq
 
 public interface AuthService {
 
-    int login(AuthRequest request);
-
-    int signUp(AuthRequest request);
+    void register(AuthRequest request);
 
 }

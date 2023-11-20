@@ -8,10 +8,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AuthRequest {
 
-    String name;
-    String email;
+    String username;
     String password;
-    String mobileNumber;
-
 
 }
