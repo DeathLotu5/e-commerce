@@ -1,6 +1,7 @@
 package com.dcrop.hightech.ecommercy.ecommercyserver.security;
 
 import com.dcrop.hightech.ecommercy.ecommercyserver.security.filters.JwtTokenGeneratorFilter;
+import com.dcrop.hightech.ecommercy.ecommercyserver.security.filters.JwtTokenValidatorFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -61,6 +62,7 @@ public class SecurityConfig {
                         //Là để cho Js có thể đọc được cookie
                         )
                 .addFilterAfter(new JwtTokenGeneratorFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JwtTokenValidatorFilter(), BasicAuthenticationFilter.class)
 //                .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests()
                 .requestMatchers("/notices", "/contact").permitAll()
