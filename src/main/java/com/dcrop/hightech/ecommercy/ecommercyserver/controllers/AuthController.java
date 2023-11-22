@@ -5,10 +5,7 @@ import com.dcrop.hightech.ecommercy.ecommercyserver.services.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
@@ -17,6 +14,11 @@ public class AuthController {
 
     private final AuthService authService;
 
+    @PostMapping("/sign-in")
+    public ResponseEntity<String> login(@RequestBody AuthRequest request) {
+        return new ResponseEntity<>(authService.login(request), HttpStatus.CREATED);
+    }
+
     @PostMapping("/sign-up")
     public ResponseEntity<String> register(@RequestBody AuthRequest request) {
         authService.register(request);
@@ -24,4 +26,8 @@ public class AuthController {
         return new ResponseEntity<>("Registration is successfully!", HttpStatus.CREATED);
     }
 
+    @GetMapping
+    public String hello() {
+        return "Welcome to home page";
+    }
 }
