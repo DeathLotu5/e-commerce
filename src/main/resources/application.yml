@@ -10,6 +10,6 @@ spring:
       hibernate:
         format_sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
 server:
   port: 9999

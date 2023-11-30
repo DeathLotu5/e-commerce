@@ -1,41 +1,67 @@
 package com.dcrop.hightech.ecommercy.ecommercyserver.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.dcrop.hightech.ecommercy.ecommercyserver.entity.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+@Data
 @Entity
-@Setter
-@Getter
-@AllArgsConstructor
+@Builder
+@Table(name = "_users")
 @NoArgsConstructor
-@Table(name = "users")
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserEntity {
+public class UserEntity implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     Long id;
 
-    @Column(length = 300)
-    String username;
+    String firstname;
 
-    @Column(length = 300)
+    String lastname;
+
+    String email;
+
     String password;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    List<AuthorityEntity> authorities = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    Role role;
 
-    public void setRoleDefault() {
-        AuthorityEntity roleDefault = new AuthorityEntity();
-        roleDefault.setName("MEMBER");
-
-        authorities.add(roleDefault);
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

@@ -1,33 +1,30 @@
 package com.dcrop.hightech.ecommercy.ecommercyserver.controllers;
 
-import com.dcrop.hightech.ecommercy.ecommercyserver.controllers.requests.AuthRequest;
+import com.dcrop.hightech.ecommercy.ecommercyserver.controllers.requests.AuthenticationRequest;
+import com.dcrop.hightech.ecommercy.ecommercyserver.controllers.requests.RegisterRequest;
+import com.dcrop.hightech.ecommercy.ecommercyserver.controllers.responses.AuthenticationResponse;
 import com.dcrop.hightech.ecommercy.ecommercyserver.services.AuthService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/sign-in")
-    public ResponseEntity<String> login(@RequestBody AuthRequest request) {
-        return new ResponseEntity<>(authService.login(request), HttpStatus.CREATED);
+    @PostMapping("/register")
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
+        return ResponseEntity.ok(authService.register(request));
     }
 
-    @PostMapping("/sign-up")
-    public ResponseEntity<String> register(@RequestBody AuthRequest request) {
-        authService.register(request);
-
-        return new ResponseEntity<>("Registration is successfully!", HttpStatus.CREATED);
-    }
-
-    @GetMapping
-    public String hello() {
-        return "Welcome to home page";
+    @PostMapping("/authenticate")
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
+        return ResponseEntity.ok(authService.authenticate(request));
     }
 }

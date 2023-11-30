@@ -1,53 +1,56 @@
 package com.dcrop.hightech.ecommercy.ecommercyserver.services.impl;
 
-import com.dcrop.hightech.ecommercy.ecommercyserver.common.utils.JwtTokenProvider;
-import com.dcrop.hightech.ecommercy.ecommercyserver.controllers.requests.AuthRequest;
+import com.dcrop.hightech.ecommercy.ecommercyserver.controllers.requests.AuthenticationRequest;
+import com.dcrop.hightech.ecommercy.ecommercyserver.controllers.requests.RegisterRequest;
+import com.dcrop.hightech.ecommercy.ecommercyserver.controllers.responses.AuthenticationResponse;
 import com.dcrop.hightech.ecommercy.ecommercyserver.entity.UserEntity;
-import com.dcrop.hightech.ecommercy.ecommercyserver.exceptions.ResourcesException;
-import com.dcrop.hightech.ecommercy.ecommercyserver.repository.UserRepository;
+import com.dcrop.hightech.ecommercy.ecommercyserver.entity.enums.Role;
+import com.dcrop.hightech.ecommercy.ecommercyserver.repositories.UserRepository;
 import com.dcrop.hightech.ecommercy.ecommercyserver.services.AuthService;
-import lombok.AllArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
+import com.dcrop.hightech.ecommercy.ecommercyserver.services.JwtService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtProvider;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
     @Override
-    public String login(AuthRequest request) {
-        UserEntity user = getUserByUsername(request.getUsername()).orElseThrow(() -> new ResourcesException("Username or password incorrect!"));
+    public AuthenticationResponse register(RegisterRequest request) {
+        var user = UserEntity
+                .builder()
+                .firstname(request.getFirstname())
+                .lastname(request.getLastname())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(Role.USER)
+                .build();
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException("Username or password incorrect!");
-        }
+        userRepository.save(user);
 
-        return jwtProvider.generateToken(user);
+        return AuthenticationResponse
+                .builder()
+                .token(jwtService.generateToken(user))
+                .build();
     }
 
     @Override
-    public void register(AuthRequest request) {
-        if (getUserByUsername(request.getUsername()).isPresent()) {
-            throw new ResourcesException("User has registered in system!");
-        }
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-        UserEntity savedUser = new UserEntity();
-        savedUser.setUsername(request.getUsername());
-        savedUser.setPassword(passwordEncoder.encode(request.getPassword()));
-        savedUser.setRoleDefault();
+        var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
 
-        userRepository.save(savedUser);
+        return AuthenticationResponse
+                .builder()
+                .token(jwtService.generateToken(user))
+                .build();
     }
-
-    private Optional<UserEntity> getUserByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
 }
